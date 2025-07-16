@@ -1,11 +1,10 @@
-import React from 'react'
+("use client");
+import React from "react";
+
+import Layout from "../components/basicComponents/Layout";
 
 const Dashboard = () => {
-  return (
-    <div>
-       
-    </div>
-  )
-}
+  return <Layout />;
+};
 
-export default Dashboard
+export default Dashboard;

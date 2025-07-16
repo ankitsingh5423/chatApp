@@ -38,23 +38,13 @@ const SigninComponent = () => {
 
   const naviagte = useNavigate();
   const dispatch = useDispatch();
-  const { loading, success, error, message } = useSelector(
+  const { loading, success, error, message, accessToken } = useSelector(
     (state) => state.auth
   );
 
   const handleSignin = (data) => {
     dispatch(SigninService(data));
   };
-  console.log("testing error ...", error);
-  useEffect(() => {
-    error ? toast.error(error) : "";
-    console.log(error);
-    if (success == true) {
-      toast.success(message);
-      naviagte("/dashboard");
-    }
-    dispatch(clearMessages());
-  }, [success, error]);
 
   return (
     <div className="w-full flex justify-center h-lvh items-center">
@@ -65,7 +55,7 @@ const SigninComponent = () => {
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
-            <Link to={"/"} variant="link" className="text-white">
+            <Link to={"/signup"} variant="link" className="text-white">
               Sign Up
             </Link>
           </CardAction>

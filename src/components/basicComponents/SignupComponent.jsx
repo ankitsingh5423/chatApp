@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { clearMessages } from "../../features/auth/authSlice";
 import { schemaSignup } from "../../features/auth/authSchema";
+import { Loader2Icon } from "lucide-react";
 const SignupComponent = () => {
   const dispatch = useDispatch();
   const { loading, error, success, message, user } = useSelector(
@@ -46,10 +47,7 @@ const SignupComponent = () => {
   };
 
   useEffect(() => {
-    error ? toast.error(error) : "";
-
-    if (success == true) {
-      toast.success(message || "Successfull");
+    if (success === true) {
       navigate("/signin");
     }
     dispatch(clearMessages());

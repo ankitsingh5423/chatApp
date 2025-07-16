@@ -1,7 +1,11 @@
 import axios from "axios";
 const axoisInstance = axios.create({
-  baseURL: "https://api.freeapi.app/api/v1/",
-  headers: { accept: "application/json", "content-type": "application/json" },
+  baseURL: "http://localhost:8080/api/v1/",
+  headers: {
+    accept: "application/json",
+    "content-type": "application/json",
+  },
+  withCredentials: true,
 });
 
 export default axoisInstance;
