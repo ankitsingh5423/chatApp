@@ -58,7 +58,7 @@ const authSlice = createSlice({
       })
       .addCase(SigninService.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.data.user.role;
+        state.user = action.payload.data.user;
         state.success = action.payload.success;
         state.message = action.payload.message;
         state.isLoggedIn = true;
@@ -79,12 +79,12 @@ const authSlice = createSlice({
       .addCase(currentUser.fulfilled, (state, action) => {
         state.loading = false;
         state.success = action.payload.success;
-        state.user = action.payload.data.role;
+        state.user = action.payload.data;
         state.isLoggedIn = true;
       })
       .addCase(currentUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload.error || "something went wrong";
         state.success = action.payload.success;
         state.isLoggedIn = false;
       });

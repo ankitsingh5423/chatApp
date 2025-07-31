@@ -6,13 +6,16 @@ import { BrowserRouter } from "react-router";
 import { store } from "./store/store.js";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
+import { ThemeProvider } from "./components/basicComponents/ThemeProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
-        <ToastContainer autoClose={1500} />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <App />
+          <ToastContainer autoClose={1500} />
+        </ThemeProvider>
       </BrowserRouter>
     </Provider>
   </StrictMode>

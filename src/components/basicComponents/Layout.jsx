@@ -1,13 +1,29 @@
-import React from 'react'
-import ChatSidebar from "../basicComponents/ChatSidebar";
+import React from "react";
+import { useSelector } from "react-redux";
+import ChatSidebar from "./ChatSidebar";
+import ChatArea from "./ChatArea";
+
 const Layout = () => {
+  const { selectedUser } = useSelector((state) => state.chats);
+
   return (
-    <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
-      {/* chat-sidebar */}
-      <ChatSidebar />
-      <div className="bg-yellow-400 lg:col-span-3 md:col-span-2 max-sm:hidden"></div>
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+      <div
+        className={`flex-col w-full flex-shrink-0 md:flex md:w-auto ${
+          selectedUser ? "hidden" : "flex"
+        } `}
+      >
+        <ChatSidebar />
+      </div>
+      <main
+        className={`flex-1 flex-col md:flex ${
+          selectedUser ? "flex" : "hidden"
+        }`}
+      >
+        <ChatArea />
+      </main>
     </div>
   );
-}
+};
 
-export default Layout
+export default Layout;

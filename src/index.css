@@ -3,10 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body{
+/* body{
   background-color: #000000ef;
   color: #fff;
-}
+} */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

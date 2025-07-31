@@ -3,10 +3,7 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router";
 
 const ProtectedRoutes = ({ children }) => {
-  const { user, loading, success, isLoggedIn } = useSelector(
-    (state) => state.auth
-  );
-  console.log("user before....", user, "isLoggedIn", isLoggedIn);
+  const { user, loading } = useSelector((state) => state.auth);
 
   if (loading) {
     return <p className="text-3xl">Loading..</p>;

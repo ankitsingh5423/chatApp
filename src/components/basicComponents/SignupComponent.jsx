@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useDispatch, useSelector } from "react-redux";
+import { Loader2 as Loader2Icon, RocketIcon } from "lucide-react";
+
+// Shadcn UI Components
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -14,24 +17,22 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useDispatch, useSelector } from "react-redux";
+
+// Your Project Imports
 import { registerService } from "../../services/authServices";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
 import { clearMessages } from "../../features/auth/authSlice";
 import { schemaSignup } from "../../features/auth/authSchema";
-import { Loader2Icon } from "lucide-react";
+import { ModeToggle } from "./SelectMode";
+
 const SignupComponent = () => {
   const dispatch = useDispatch();
-  const { loading, error, success, message, user } = useSelector(
-    (state) => state.auth
-  );
+  const { loading, error, success } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+
   const {
     register,
-    resetField,
     handleSubmit,
-    watch,
+    reset, // Use reset to clear the whole form
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schemaSignup),
@@ -39,111 +40,125 @@ const SignupComponent = () => {
       username: "",
       email: "",
       password: "",
+      role: "ADMIN", // Set default role here
     },
   });
+
+  // This function is now passed to the form's onSubmit
   const handleRegister = (data) => {
     dispatch(registerService(data));
-    resetField("username"), resetField("email"), resetField("password");
   };
 
   useEffect(() => {
-    if (success === true) {
+    // Navigate on success and then reset the form
+    if (success) {
       navigate("/signin");
+      reset();
     }
-    dispatch(clearMessages());
-  }, [success, error]);
+    // Cleanup messages on component unmount or when dependencies change
+    return () => {
+      dispatch(clearMessages());
+    };
+  }, [success, navigate, dispatch, reset]);
 
   return (
-    <div className="w-full flex justify-center h-lvh items-center">
-      <Card className="w-full max-w-sm bg-gradient-to-b from-gray-800 to-black text-white shadow-md shadow-gray-400">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login to your account</CardTitle>
-          <CardDescription className="text-white">
-            Enter your email below to login to your account
-          </CardDescription>
-          <CardAction>
-            <Link to={"/signin"} variant="link" className="text-white">
-              Sign in
-            </Link>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-3">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
+          <RocketIcon className="h-6 w-6" />
+          <h1 className="text-xl font-bold">MyApp</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <ModeToggle />
+          <Button variant="outline">Change</Button>
+        </div>
+      </header>
+
+      <main className="flex-grow flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm shadow-lg">
+          <form onSubmit={handleSubmit(handleRegister)}>
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Create an Account</CardTitle>
+              <CardDescription>
+                Enter your details below to create your new account.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <input type="hidden" {...register("role")} />
+
+              {/* Username Input */}
               <div className="grid gap-2">
-                <input type="hidden" value={"ADMIN"} {...register("role")} />
-                <Label htmlFor="email" className="text-[18px]">
-                  Name
-                </Label>
+                <Label htmlFor="username">Name</Label>
                 <Input
-                  className="text-white placeholder:text-white focus-visible:border-white shadow-white focus-visible:outline-white"
-                  id="name"
+                  id="username"
                   type="text"
-                  placeholder="enter your name"
-                  defaultValue=""
+                  placeholder="John Doe"
                   {...register("username")}
+                  aria-invalid={errors.username ? "true" : "false"}
                 />
-                <p className="text-red-600">{errors.username?.message}</p>
+                {errors.username && (
+                  <p className="text-sm text-red-500">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
+
+              {/* Email Input */}
               <div className="grid gap-2">
-                <Label htmlFor="email" className="text-[18px]">
-                  Email
-                </Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  className="text-white placeholder:text-white focus-visible:border-white shadow-white focus-visible:outline-white"
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  defaultValue="test"
                   {...register("email")}
+                  aria-invalid={errors.email ? "true" : "false"}
                 />
-                <p className="text-red-600">{errors.email?.message}</p>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
+
+              {/* Password Input */}
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password" className="text-[18px]">
-                    Password
-                  </Label>
-                  <Link
-                    to="/signin"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
-                  className="text-white placeholder:text-white focus-visible:border-white shadow-white focus-visible:outline-white"
                   id="password"
                   type="password"
-                  placeholder="enter password"
+                  placeholder="••••••••"
                   {...register("password")}
+                  aria-invalid={errors.password ? "true" : "false"}
                 />
-                <p className="text-red-600">{errors.password?.message}</p>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-            </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    Signing Up...
+                  </>
+                ) : (
+                  "Sign Up"
+                )}
+              </Button>
+              <Button variant="outline" className="w-full" type="button">
+                Sign Up with Google
+              </Button>
+              <div className="mt-4 text-center text-sm">
+                Already have an account?{" "}
+                <Link to="/signin" className="underline">
+                  Sign in
+                </Link>
+              </div>
+            </CardFooter>
           </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 border hover:shadow-md transform hover:translate-3d shadow-neutral-600"
-            onClick={handleSubmit(handleRegister)}
-          >
-            {loading ? (
-              <span className="flex gap-1 justify-between items-center">
-                <Loader2Icon className="animate-spin" />
-                Signup...
-              </span>
-            ) : (
-              "Signup"
-            )}
-          </Button>
-          <Button variant="outline" className="w-full text-black">
-            Login with Google
-          </Button>
-        </CardFooter>
-      </Card>
+        </Card>
+      </main>
     </div>
   );
 };

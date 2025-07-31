@@ -6,7 +6,6 @@ const PublicRoutes = ({ children }) => {
   const { user, loading, success, isLoggedIn } = useSelector(
     (state) => state.auth
   );
-  console.log("user before....", user);
 
 
   if (loading) {
