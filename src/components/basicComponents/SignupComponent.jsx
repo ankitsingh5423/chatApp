@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { Loader2 as Loader2Icon, RocketIcon } from "lucide-react";
+import { Loader2 as Loader2Icon, MoreVertical, RocketIcon } from "lucide-react";
 
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -32,7 +40,7 @@ const SignupComponent = () => {
   const {
     register,
     handleSubmit,
-    reset, // Use reset to clear the whole form
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schemaSignup),
@@ -40,22 +48,19 @@ const SignupComponent = () => {
       username: "",
       email: "",
       password: "",
-      role: "ADMIN", // Set default role here
+      role: "ADMIN",
     },
   });
 
-  // This function is now passed to the form's onSubmit
   const handleRegister = (data) => {
     dispatch(registerService(data));
   };
 
   useEffect(() => {
-    // Navigate on success and then reset the form
     if (success) {
       navigate("/signin");
       reset();
     }
-    // Cleanup messages on component unmount or when dependencies change
     return () => {
       dispatch(clearMessages());
     };
@@ -70,7 +75,46 @@ const SignupComponent = () => {
         </div>
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <Button variant="outline">Change</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+                <span className="sr-only">More Options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Know More</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <a
+                  href="https://github.com/ankitsingh5423"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Github Account
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <a
+                  href="https://www.linkedin.com/in/ankisingh5423/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn Account
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                <a
+                  href="https://ankitsingh5423.github.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  My Portfolio
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
@@ -79,7 +123,7 @@ const SignupComponent = () => {
           <form onSubmit={handleSubmit(handleRegister)}>
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Create an Account</CardTitle>
-              <CardDescription>
+              <CardDescription className="mb-2">
                 Enter your details below to create your new account.
               </CardDescription>
             </CardHeader>
@@ -135,7 +179,7 @@ const SignupComponent = () => {
                 )}
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4">
+            <CardFooter className="flex flex-col gap-4 mt-4">
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
@@ -145,9 +189,6 @@ const SignupComponent = () => {
                 ) : (
                   "Sign Up"
                 )}
-              </Button>
-              <Button variant="outline" className="w-full" type="button">
-                Sign Up with Google
               </Button>
               <div className="mt-4 text-center text-sm">
                 Already have an account?{" "}

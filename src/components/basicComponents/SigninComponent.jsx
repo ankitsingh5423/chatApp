@@ -1,9 +1,13 @@
 import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useDispatch, useSelector } from "react-redux";
+import { Loader2 as Loader2Icon, MoreVertical, RocketIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Loader2Icon } from "lucide-react";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -12,116 +16,196 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schemaSignin } from "../../features/auth/authSchema";
-import { useSelector, useDispatch } from "react-redux";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { SigninService } from "../../services/authServices";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
 import { clearMessages } from "../../features/auth/authSlice";
+import { schemaSignin } from "../../features/auth/authSchema";
+import { ModeToggle } from "./SelectMode";
 
 const SigninComponent = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, success, error, accessToken } = useSelector(
+    (state) => state.auth
+  );
+
   const {
     register,
     handleSubmit,
-    watch,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schemaSignin),
-    // defaultValues: {
-    //   email: "",
-    //   password: "",
-    // },
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
-
-  const naviagte = useNavigate();
-  const dispatch = useDispatch();
-  const { loading, success, error, message, accessToken } = useSelector(
-    (state) => state.auth
-  );
 
   const handleSignin = (data) => {
     dispatch(SigninService(data));
   };
 
+  useEffect(() => {
+    if (success && accessToken) {
+      navigate("/dashboard");
+      reset();
+    }
+    return () => {
+      dispatch(clearMessages());
+    };
+  }, [success, accessToken, navigate, dispatch, reset]);
+
   return (
-    <div className="w-full flex justify-center h-lvh items-center">
-      <Card className="w-full max-w-sm bg-gradient-to-b from-gray-800 to-black text-white shadow-md shadow-gray-400">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login to your account</CardTitle>
-          <CardDescription className="text-white">
-            Enter your email below to login to your account
-          </CardDescription>
-          <CardAction>
-            <Link to={"/signup"} variant="link" className="text-white">
-              Sign Up
-            </Link>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-3">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-2">
+          <RocketIcon className="h-6 w-6" />
+          <h1 className="text-xl font-bold">MyApp</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <ModeToggle />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+                <span className="sr-only">More Options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Know More</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <a
+                  href="https://github.com/ankitsingh5423"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Github Account
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <a
+                  href="https://www.linkedin.com/in/ankisingh5423/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn Account
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                <a
+                  href="https://ankitsingh5423.github.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  My Portfolio
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
+
+      {/* ## MAIN CONTENT - CENTERED SIGNIN CARD ## */}
+      <main className="flex-grow flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm shadow-lg">
+          {/* Use form's onSubmit for proper handling */}
+          <form onSubmit={handleSubmit(handleSignin)}>
+            <CardHeader className="text-center mb-3">
+              <CardTitle className="text-2xl">Sign In</CardTitle>
+              <CardDescription>
+                Enter your credentials to access your account.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              {/* username Input */}
               <div className="grid gap-2">
-                <Label htmlFor="email" className="text-[18px]">
+                <Label htmlFor="username" className="text-[18px]">
                   Name
                 </Label>
                 <Input
-                  className="text-white placeholder:text-white focus-visible:border-white shadow-white focus-visible:outline-white"
-                  id="name"
+                  id="username"
                   type="text"
                   placeholder="enter your name"
                   defaultValue=""
                   {...register("username")}
                 />
-                <p className="text-red-600">{errors.username?.message}</p>
+                {errors.username && (
+                  <p className="text-sm text-red-500">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
+
+              {/* Password Input */}
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password" className="text-[18px]">
-                    Password
-                  </Label>
+                  <Label htmlFor="password">Password</Label>
                   <Link
-                    to="/signin"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    to="#"
+                    className="ml-auto inline-block text-sm underline"
+                    onClick={() =>
+                      alert("Forgot password feature not implemented yet")
+                    }
                   >
-                    Forgot your password?
+                    Forgot password?
                   </Link>
                 </div>
                 <Input
-                  className="text-white placeholder:text-white focus-visible:border-white shadow-white focus-visible:outline-white"
                   id="password"
                   type="password"
-                  placeholder="enter password"
+                  placeholder="••••••••"
                   {...register("password")}
+                  aria-invalid={errors.password ? "true" : "false"}
                 />
-                <p className="text-red-600">{errors.password?.message}</p>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
-            </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4 mt-4">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                type="button"
+                onClick={() =>
+                  alert("Google Sign In not implemented yet \n Comming soon!")
+                }
+              >
+                Sign In with Google
+              </Button>
+              <div className="mt-4 text-center text-sm">
+                Don't have an account?{" "}
+                <Link to="/signup" className="underline">
+                  Sign up
+                </Link>
+              </div>
+            </CardFooter>
           </form>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 border hover:shadow-md transform hover:translate-3d shadow-neutral-600"
-            onClick={handleSubmit(handleSignin)}
-          >
-            {loading ? (
-              <span className="flex gap-1 justify-between items-center">
-                <Loader2Icon className="animate-spin" />
-                Signin...
-              </span>
-            ) : (
-              "Signin"
-            )}
-          </Button>
-          <Button variant="outline" className="w-full text-black">
-            Login with Google
-          </Button>
-        </CardFooter>
-      </Card>
+        </Card>
+      </main>
     </div>
   );
 };

@@ -67,6 +67,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || "somthing went worng";
         state.success = action.payload.success;
+        state.message = action.payload?.message || "something went wrong";
       });
 
     builder

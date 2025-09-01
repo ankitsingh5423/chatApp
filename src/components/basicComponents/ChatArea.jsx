@@ -15,9 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectedUser } from "../../features/chats/chatSlice";
 import {
   getAllMessagesService,
-  oneOnOneChatService,
   sendMessageService,
 } from "../../services/chatServices";
+import { socket } from "@/utils/socket";
 
 const ChatArea = () => {
   const dispatch = useDispatch();
@@ -54,20 +54,28 @@ const ChatArea = () => {
     }
   }, [currentChatUser, selectedChat, dispatch]);
 
-  const handleSendMessage = () => {
+  // without scoket
+  const handleSendMessage = async () => {
     const trimmedMessage = message.trim();
     if (!trimmedMessage || !currentChatUser) return;
 
-    dispatch(
-      sendMessageService({
-        chatId: selectedChat,
-        message: trimmedMessage,
-      })
-    );
-    // dispatch(oneOnOneChatService(currentChatUser._id));
+    try {
+      const response = await dispatch(
+        sendMessageService({
+          chatId: selectedChat,
+          message: trimmedMessage,
+        })
+      ).unwrap();
 
-    setMessage("");
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
+
+  const newestmessges = [...chatMessages].sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -140,8 +148,8 @@ const ChatArea = () => {
         <div className="p-4 md:p-6 space-y-4">
           {loading ? (
             <MessageSkeleton />
-          ) : chatMessages && chatMessages.length > 0 ? (
-            chatMessages.map((msg) => (
+          ) : newestmessges && newestmessges.length > 0 ? (
+            newestmessges.map((msg) => (
               <ChatMessage
                 key={msg._id}
                 content={msg.content}

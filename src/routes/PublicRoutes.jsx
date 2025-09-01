@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router";
+import { FadeLoader } from "react-spinners";
 
 const PublicRoutes = ({ children }) => {
-  const { user, loading, success, isLoggedIn } = useSelector(
+  const { user, success, loading, isLoggedIn } = useSelector(
     (state) => state.auth
   );
 
-
   if (loading) {
-    return <p className="text-3xl">Loading..</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <FadeLoader color="#002aff" />
+      </div>
+    );
   }
 
   if (user) {
