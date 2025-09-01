@@ -44,8 +44,7 @@ const chatSlice = createSlice({
       })
       .addCase(avalableUserListService.rejected, (state, action) => {
         state.chatListLoading = false;
-        state.success = action.payload.sucess;
-        state.message = action.payload.message;
+        state.message = action.payload?.message || "something went wrong";
       });
 
     builder

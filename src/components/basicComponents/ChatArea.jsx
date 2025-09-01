@@ -29,7 +29,7 @@ const ChatArea = () => {
     selectedChat,
     selectedUser: currentChatUser,
   } = useSelector((state) => state.chats);
-  const { user } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
 
   const [message, setMessage] = useState("");
 
@@ -49,7 +49,7 @@ const ChatArea = () => {
   }, [chatMessages]);
 
   useEffect(() => {
-    if (currentChatUser && selectedChat) {
+    if (currentChatUser && selectedChat && token) {
       dispatch(getAllMessagesService({ chatId: selectedChat }));
     }
   }, [currentChatUser, selectedChat, dispatch]);

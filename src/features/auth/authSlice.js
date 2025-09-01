@@ -14,6 +14,7 @@ const initialState = {
   message: null,
   showToast: false,
   isLoggedIn: false,
+  token: localStorage.getItem("token") || null,
 };
 
 const authSlice = createSlice({
@@ -102,6 +103,7 @@ const authSlice = createSlice({
         state.user = null;
         state.message = action.payload.message;
         state.success = action.payload.success;
+        localStorage.removeItem("token");
       })
       .addCase(logoutService.rejected, (state, action) => {
         state.loading = false;
