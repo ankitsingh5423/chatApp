@@ -61,12 +61,12 @@ const authSlice = createSlice({
         state.user = action.payload.data.user;
         state.success = action.payload.success;
         state.message = action.payload.message;
+        localStorage.setItem("token", action.payload.data.accessToken);
         state.isLoggedIn = true;
       })
       .addCase(SigninService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "somthing went worng";
-        state.success = action.payload.success;
+        state.error = action.payload?.message || "somthing went wrong";
         state.message = action.payload?.message || "something went wrong";
       });
 
