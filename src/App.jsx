@@ -6,11 +6,13 @@ import { clearToast } from "./features/auth/authSlice";
 import { currentUser } from "./services/authServices";
 const App = () => {
   const dispatch = useDispatch();
-  const { message, success } = useSelector((state) => state.auth);
+  const { message, success, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(currentUser());
-  }, [dispatch]);
+    if (token) {
+      dispatch(currentUser());
+    }
+  }, [token, dispatch]);
 
   useEffect(() => {
     if (success === true) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { MoreVertical, Search, SquarePen } from "lucide-react";
 import {
   DropdownMenu,
@@ -30,11 +30,15 @@ const ChatSidebar = () => {
   const { chatListLoading, chatList, selectedUser } = useSelector(
     (state) => state.chats
   );
+  const { user, token } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    dispatch(avalableUserListService());
-  }, [dispatch]);
+    if (token) {
+      dispatch(avalableUserListService());
+    }
+    console.log(token);
+  }, [dispatch, token]);
 
   const handleLogout = () => {
     dispatch(logoutService());

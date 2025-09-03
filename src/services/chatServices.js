@@ -1,11 +1,11 @@
-import axoisInstance from "./axoisInstance";
+import axiosInstance from "./axiosInstance";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const avalableUserListService = createAsyncThunk(
   "chatList",
   async (thunkAPI) => {
     try {
-      const response = await axoisInstance.get("chat-app/chats/users");
+      const response = await axiosInstance.get("chat-app/chats/users");
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -17,7 +17,7 @@ export const oneOnOneChatService = createAsyncThunk(
   "onOneoneChat",
   async (receiverId, thunkAPI) => {
     try {
-      const response = await axoisInstance.post(
+      const response = await axiosInstance.post(
         `chat-app/chats/c/${receiverId}`
       );
       return response.data;
@@ -34,7 +34,7 @@ export const sendMessageService = createAsyncThunk(
       const formData = new FormData();
       formData.append("content", message);
 
-      const response = await axoisInstance.post(
+      const response = await axiosInstance.post(
         `chat-app/messages/${chatId}`,
         formData,
         {
@@ -54,7 +54,7 @@ export const getAllMessagesService = createAsyncThunk(
   "getAllMessage",
   async ({ chatId }, thunkAPI) => {
     try {
-      const response = await axoisInstance.get(`chat-app/messages/${chatId}`);
+      const response = await axiosInstance.get(`chat-app/messages/${chatId}`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);

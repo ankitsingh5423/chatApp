@@ -1,11 +1,11 @@
-import axoisInstance from "./axoisInstance";
+import axiosInstance from "./axiosInstance";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const registerService = createAsyncThunk(
   "register",
   async (data, thunkAPI) => {
     try {
-      const response = await axoisInstance.post("users/register", data);
+      const response = await axiosInstance.post("users/register", data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -19,7 +19,7 @@ export const SigninService = createAsyncThunk(
   "signin",
   async (data, thunkAPI) => {
     try {
-      const response = await axoisInstance.post("users/login", data);
+      const response = await axiosInstance.post("users/login", data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -31,7 +31,7 @@ export const currentUser = createAsyncThunk(
   "currentUser",
   async (data, thunkAPI) => {
     try {
-      const response = await axoisInstance.get("users/current-user", data);
+      const response = await axiosInstance.get("users/current-user", data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -41,7 +41,7 @@ export const currentUser = createAsyncThunk(
 
 export const logoutService = createAsyncThunk("logout", async (_, thunkAPI) => {
   try {
-    const response = await axoisInstance.post("users/logout");
+    const response = await axiosInstance.post("users/logout");
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("isLoggedIn");

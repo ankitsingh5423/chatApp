@@ -62,11 +62,13 @@ const authSlice = createSlice({
         state.user = action.payload.data.user;
         state.success = action.payload.success;
         state.message = action.payload.message;
+        state.token = action.payload.data.accessToken;
         localStorage.setItem("token", action.payload.data.accessToken);
         state.isLoggedIn = true;
       })
       .addCase(SigninService.rejected, (state, action) => {
         state.loading = false;
+        state.success = false;
         state.error = action.payload?.message || "somthing went wrong";
         state.message = action.payload?.message || "something went wrong";
       });
@@ -86,7 +88,7 @@ const authSlice = createSlice({
       })
       .addCase(currentUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error || "something went wrong";
+        state.error = action.payload?.error || "something went wrong";
         state.success = action.payload.success;
         state.isLoggedIn = false;
       });
@@ -104,12 +106,12 @@ const authSlice = createSlice({
         state.message = action.payload.message;
         state.success = action.payload.success;
         localStorage.removeItem("token");
+        state.token = null;
       })
       .addCase(logoutService.rejected, (state, action) => {
         state.loading = false;
-        state.message = action.payload.message;
-        state.error = action.payload.error;
-        state.success = action.payload.success;
+        state.message = action.payload?.message;
+        state.error = action.payload?.error;
       });
   },
 });
