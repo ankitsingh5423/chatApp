@@ -7,6 +7,7 @@ import { store } from "./store/store.js";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "./components/basicComponents/ThemeProvider.jsx";
+import { Analytics } from "@vercel/analytics/react";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <App />
+          <Analytics />
           <ToastContainer autoClose={1500} />
         </ThemeProvider>
       </BrowserRouter>
